@@ -1,6 +1,10 @@
 const express = require('express');
 const fs = require('fs');
+const path = require('path');
 const app = express();
+
+// This line tells Express to serve all files inside your public folder
+app.use(express.static(path.join(__dirname, 'public')));
 const port = process.env.PORT || 3000;
 
 // Allow the server to read incoming JSON data (like our image)
