@@ -52,9 +52,6 @@
             .then(response => response.json())
             .then(data => alert(data.message));
         }
-        const dataURL = canvas.toDataURL('image/png');
-document.getElementById('downloadBtn').href = dataURL;
     </script>
-    <a id="downloadBtn" download="capture.png">Download Image</a>
 </body>
 </html>
