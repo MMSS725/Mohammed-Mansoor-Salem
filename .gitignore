@@ -1,2 +1,4 @@
 node_modules/
 capture_*.png
+.env
+node_modules
